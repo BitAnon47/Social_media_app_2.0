@@ -1,0 +1,37 @@
+-------------Basic app implementation---------------
+convert the Social media app to modular and services approch
+Roles based authorization.
+Nested include while reterving the comments of the specific users->posts->comments->likes
+Also implement the pagination in that .
+
+-------------Images uplaod--------------
+Multer ->file uplaod 
+jpg file uplaod with thier resolution 
+exclude excel file 
+
+--------------Multiple files-----------
+upload multiple files against one id 
+upload concept of the group photo like while uploading the post contains mulitple images.
+size limit of the file 
+optmize the size limit
+file storage types in depth study	
+S3 bucket,blob,google cloud storage advantages and thier use case scenario
+
+--------------Concepts of the ejs---------------
+
+ejs->template-creation->storefile in folder->html format
+ejs->convert the html files into the pdf
+Get in depth understanding of the ejs.
+	
+-------------------Extra function for the better understanding of the next() function concept----------------------------
+a one api like login have two fucntionalities like call from the route it send response back to route/response-handler if call from the other place or other than route it send general res ,made the req,next null 
+Totally working of the next function
+
+----------Webhooks understanding------------------
+Webhooks study.
+How its end points user
+What it return 
+How to store it intent in json in the db 
+how to elicicate the data in store in the db in different coloumns like payment done payment id ,meta data ,success or fails status
+
+

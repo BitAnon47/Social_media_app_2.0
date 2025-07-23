@@ -1,0 +1,36 @@
+
+Once a user lands on your social media app, they can either sign up for a new account or log in if already registered. If they forget their password, they click on “Forgot Password”, and the system sends them a temporary token. This token is saved in the browser’s session storage and lets the user reset their password through the update-password page. If the token is expired, the app shows a message like "Token Expired" and redirects the user to the login screen.
+
+Once the user logs in successfully, the app creates two custom tokens:
+
+An Access Token (valid for 15 minutes)
+
+A Refresh Token (valid for 1 day)
+
+Both tokens are stored in session storage. The Access Token is used to access protected resources, and when it expires (showing error 601), the frontend calls the refresh token API, gets a new access token, and retries the failed request automatically.
+
+After login, the user is taken to the dashboard. Here, they can view a timeline filled with posts from all users. These posts are fetched using the GET /posts/all route.
+
+From the dashboard, users can go to the Settings page, where they have full control over their account:
+
+They can update their email.
+
+Edit their profile information like name, bio, and photo.
+
+Or delete their profile completely, which removes their data and logs them out.
+
+Now, when it comes to posting content, users can:
+
+Create new posts using a form and send it via the POST /posts/create route.
+
+Edit any of their own posts through PUT /posts/:id.
+
+Delete their posts with the DELETE /posts/:id endpoint.
+
+View individual post details by clicking on a post which triggers GET /posts/:id.
+
+Visit their profile page to see a list of only their posts via GET /posts/user/:id.
+
+All protected actions (like creating, updating, deleting posts, or changing settings) require the access token. If it’s expired, the frontend handles the token refresh logic automatically using the refresh token and then retries the original action without disturbing the user.
+
+This smooth flow — from authentication to post management — ensures a secure, user-friendly experience that feels like a real, modern social media app.
