@@ -28,8 +28,8 @@ module.exports = function (sequelize, DataTypes)
             },
             name: {
                 type: DataTypes.STRING,
-                allowNull: true,
-                defaultValue: null,
+                allowNull: false,
+                defaultValue: '', // or remove defaultValue and always provide a name
                 field: 'name'
             },
             profileImage: {
@@ -61,21 +61,30 @@ module.exports = function (sequelize, DataTypes)
 
             password: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
                 field: 'passWord'
             },
             confirmPassword: {
                 type: DataTypes.VIRTUAL,
-                allowNull: true,
-                defaultValue: null,
+                allowNull: false,
                 validate: {
                     notEmpty: true
                 }
             },
             active: {
                 type: DataTypes.BOOLEAN,
-                allowNull: true,
+                allowNull: false,
+                defaultValue: 1, // or 0, as you prefer
                 field: 'active'
+            },
+            userrole_id: {
+                type: DataTypes.INTEGER.UNSIGNED,
+                allowNull: false,
+                field: 'userrole_id',
+                references: {
+                    model: 'roles',
+                    key: 'id'
+                }
             },
         }, {
         tableName: "users",
@@ -98,6 +107,7 @@ module.exports = function (sequelize, DataTypes)
         delete attributes.confirmPassword;
         return attributes;
     };
+    
     Model.prototype.hashPassword = function () {
         if (this.password) { this.password = crypto.createHash("sha1").update(this.password).digest("hex"); }
     };

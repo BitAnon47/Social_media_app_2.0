@@ -1,18 +1,9 @@
-// const crypto = require("./../../../utils/crypto");
-const crypto = require("eb-butler-utils");
-//const keys_length = require("../../../../config/config.json").keys_length;
-// const base_encoder = require("./../../../utils/base_encoder");
+
 const base_encoder = require("eb-butler-utils");
-const { generateRandomString } = require("eb-butler-utils");
 const configJSON = require("../../../../config/config.json");
-const constants = require("../../../../config/constants.json");
-//const Pagination = require("../../../../helpers/pagination");
-const common = require('../../../../helpers/common')
 const sequelize = require('../../../../db/sequelize/sequelize');
 const { Op } = require('sequelize')
-//const jwt = require('jsonwebtoken');
 const userService = require('../services/srvcUsers')
-
 const config = require("../../../../config/config.json");
 const keys_length = config.keys_length;
 const index_separator = keys_length.index_separator;
@@ -31,7 +22,7 @@ const create = async function (req, res, next) {
       }
   
       // ✅ Validate allowed roles
-      const allowedRoles = ['user', 'admin'];
+      const allowedRoles = ['user'];
       if (!allowedRoles.includes(role)) {
         return res.status(400).json({ message: 'Invalid role provided' });
       }
@@ -119,9 +110,6 @@ const login = async function (req, res, next) {
         let access_authorization = encoded_user_id + index_separator + encoded_access_id + index_separator + access_token + index_separator + accessExpiry;
 
         refresh_token = encoded_user_id + index_separator + encoded_access_id + index_separator + refresh_token + index_separator + refreshExpiry;
-        // const token = jwt.sign({ userId: user.id, email: user.email, username: user.username  }, 'akash', {
-        //     expiresIn: '24h',
-        // });
 
         return next({
             user: user,
