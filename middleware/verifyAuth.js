@@ -2,8 +2,8 @@ const base_encoder = require("eb-butler-utils");
 const config = require("../config/config.json");
 const keys_length = config.keys_length;
 const index_separator = keys_length.index_separator;
-// const sequelize = require("../db/sequelize/sequelize");
-// const userService = require("../src/modules/users/services/srvcUsers");
+ const sequelize = require("../db/sequelize/sequelize");
+ const userService = require("../src/modules/users/services/srvcUsers");
 
 async function verifyAuth(req, res, next) {
     try {
@@ -22,9 +22,15 @@ async function verifyAuth(req, res, next) {
             return res.status(601).json({ error: "Access token expired" });
         }
 
-            req.user = { userId, authId };
-            //console.log("Token authenticated for userId:", userId, "authId:", authId);
-            return next();
+        // Check user existence and extract role using findUserById
+        const user = await userService.findUserById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        req.user = { userId, authId };
+        req.role = user.userrole_id;
+        // console.log("Token authenticated for userId:", userId, "authId:", authId, "role:", user.userrole_id);
+        return next();
 
     } catch (err) {
         return next(new TypeError("Authentication failed: " + err.message));

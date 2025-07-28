@@ -2,7 +2,6 @@
 const base_encoder = require("eb-butler-utils");
 const configJSON = require("../../../../config/config.json");
 const sequelize = require('../../../../db/sequelize/sequelize');
-const { Op } = require('sequelize')
 const userService = require('../services/srvcUsers')
 const config = require("../../../../config/config.json");
 const keys_length = config.keys_length;
@@ -12,51 +11,55 @@ const index_separator = keys_length.index_separator;
 
 const create = async function (req, res, next) {
     try {
-      let { name, email, password, confirmPassword, phoneNumber, role } = req.body;
-      let username = email.split('@')[0];
-      req.body.username = username;
-  
-      // 🧠 Fallback role if not provided
-      if (!role || typeof role !== 'string' || role.trim() === '') {
-        role = 'user';
-      }
-  
-      // ✅ Validate allowed roles
-      const allowedRoles = ['user'];
-      if (!allowedRoles.includes(role)) {
-        return res.status(400).json({ message: 'Invalid role provided' });
-      }
-  
-      //  If role is 'admin', check that requester is superadmin
-      if (role === 'admin' && req.role !== 'superadmin') {
-        return res.status(403).json({ message: 'Only superadmin can assign admin role.' });
-      }
-  
-      // Set normalized role back to req.body
-      req.body.role = role;
-  
-      //  Call user service to create
-      let userInstance = new sequelize.db(sequelize.models.users);
-      const [user, err] = await userInstance.create(req.body);
-      if (err) return next(err);
-  
-      // Response routing logic based on role
-      if (req.role === 'superadmin') {
-        // Admin panel behavior — pass control to next middleware
-        return next(user);
-      } else {
-        // Normal API call — send response directly
-        return res.status(201).json({
-          message: 'User created successfully',
-          user,
-        });
-      }
-    } catch (error) {
-      return next(error);
-    }
-  };
-  
+        let { name, email, password, confirmPassword, phoneNumber, role } = req.body;
+        let username = email.split('@')[0];
+        req.body.username = username;
 
+        // 🧠 Fallback role if not provided
+        if (!role || typeof role !== 'string' || role.trim() === '') {
+            role = 'user';
+        }
+
+        // ✅ Validate allowed roles
+        const allowedRoles = [3];
+        if (!allowedRoles.includes(role)) {
+            return res.status(400).json({ message: 'Invalid role provided' });
+        }
+
+        //  If role is 'admin', check that requester is superadmin
+        if (role === 1 && req.role !== 2) {
+            return res.status(403).json({ message: 'Only superadmin can assign admin role.' });
+        }
+
+        // Set normalized role back to req.body
+        req.body.role = role;
+
+        console.log("user data is here");
+        //  Call user service to create
+        let userInstance = new sequelize.db(sequelize.models.users);
+        const [user, err] = await userInstance.create(req.body);
+        console.log("this is the error *******",err);
+        if (err) return next(err);
+        
+        // Response routing logic based on role
+        
+        if (req.role === 'superadmin') {
+            // Admin panel behavior — pass control to next middleware
+            return next(user);
+
+        } else {
+
+            // Normal API call — send response directly
+            return res.status(201).json({
+                message: 'User created successfully',
+                user
+            });
+
+        }
+    } catch (error) {
+        return next(error);
+    }
+};
 const update = async function (req, res, next) {
     try {
         let userInstance = new sequelize.db(sequelize.models.users);
@@ -76,7 +79,7 @@ const update = async function (req, res, next) {
 const login = async function (req, res, next) {
     try {
         let { email, password, device_token, } = req.body
-        
+
         let access_token, refresh_token, encoded_access_id, encoded_user_id, encoded_role_id, authorization, error;
         //--//
         /* check user exist or not */
@@ -85,10 +88,9 @@ const login = async function (req, res, next) {
         if (err) return next(err);
         if (!user) { return next(404) }
         if (!user.validatePassword(password)) { return next(401) }
-        
+
         // /* check user authorization base on current device and create auth if not exist */
         [authorization, error] = await userService.checkAuthorization(user.id, req);
-        console.log("hi there i am error")
 
         if (error) { return next(error) }
         //-iF user not authorization it create the new token generation-//
@@ -296,22 +298,22 @@ const getAllUsers = async (req, res) => {
     }
 };
 const softDeleteUser = async function (req, res, next) {
-  try {
-    const userId = req.params.userId || req.user?.userId; // You can use param or logged-in user
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized: User not found in request" });
+    try {
+        const userId = req.params.userId || req.user?.userId; // You can use param or logged-in user
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User not found in request" });
+        }
+
+        const userInstance = new sequelize.db(sequelize.models.users);
+        const [user, err] = await userInstance.findOne({ where: { id: userId } });
+        if (err) return next(err);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        await user.destroy(); // This will soft-delete the user (set deletedAt)
+        return res.status(200).json({ message: "User soft deleted successfully" });
+    } catch (err) {
+        return res.status(500).json({ error: "User soft delete failed", details: err.message });
     }
-
-    const userInstance = new sequelize.db(sequelize.models.users);
-    const [user, err] = await userInstance.findOne({ where: { id: userId } });
-    if (err) return next(err);
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    await user.destroy(); // This will soft-delete the user (set deletedAt)
-    return res.status(200).json({ message: "User soft deleted successfully" });
-  } catch (err) {
-    return res.status(500).json({ error: "User soft delete failed", details: err.message });
-  }
 };
 const getUserTotalCount = async (req, res) => {
     try {

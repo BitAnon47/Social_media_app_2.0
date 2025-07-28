@@ -2,7 +2,7 @@ const multer = require("multer");
 const responseH = require("./../utils/response");
 const Exception = require("eb-butler-utils").exceptions;
 const custom_exceptions = require("./../utils/custom_exceptions.json");
-const sequelize = require('./../db/sequelize/sequelize');
+const sequelize = require('../db/sequelize/sequelize');
 
 const uc_words = str => String(str).trim().toLowerCase().replace(/\b[a-z]/g, s => s.toUpperCase());
 const setField = field => String(field || "").trim().replace(/_/g, " ");
@@ -66,7 +66,7 @@ module.exports = async function (data, req, res, next) {
                     type: "Express Validation Error"
                 };
             } else {
-                response.setError(error, Exception(422), 422);
+                response.setError(error, Exception(422), 422);  
                 response.message = message;
                 response.error = {
                     message: error.message,

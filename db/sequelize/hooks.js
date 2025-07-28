@@ -1,5 +1,5 @@
  //--//
-const configJSON = require('./../../config/config.json')
+const configJSON = require('../../config/config.json')
 let dbInstance = require('./instance')
 //--//
 const toLowerCase = function (str) {

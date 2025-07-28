@@ -1,8 +1,6 @@
 const crypto = require("crypto");
-module.exports = function (sequelize, DataTypes)
- {
-    let isUnique = function (field)
-     {
+module.exports = function (sequelize, DataTypes) {
+    let isUnique = function (field) {
         return function (value, next) {
             let Model = sequelize.models.users;
             let query = {};
@@ -11,7 +9,7 @@ module.exports = function (sequelize, DataTypes)
                 where: query,
                 attributes: ["id"]
             }).then(function (obj) {
-                
+
                 if (obj && obj.id) { next(field + ": '" + value + "' is already taken"); }
                 else { next(); }
             });
@@ -80,6 +78,7 @@ module.exports = function (sequelize, DataTypes)
             userrole_id: {
                 type: DataTypes.INTEGER.UNSIGNED,
                 allowNull: false,
+                defaultValue: 3, // Assuming 3 is the ID for 'user'
                 field: 'userrole_id',
                 references: {
                     model: 'roles',
@@ -99,7 +98,7 @@ module.exports = function (sequelize, DataTypes)
 
 
 
-    
+
     //--//
     Model.prototype.toJSON = function (options) {
         let attributes = Object.assign({}, this.get());
@@ -107,7 +106,7 @@ module.exports = function (sequelize, DataTypes)
         delete attributes.confirmPassword;
         return attributes;
     };
-    
+
     Model.prototype.hashPassword = function () {
         if (this.password) { this.password = crypto.createHash("sha1").update(this.password).digest("hex"); }
     };
@@ -119,6 +118,6 @@ module.exports = function (sequelize, DataTypes)
         let passwordHash = crypto.createHash("sha1").update(password).digest("hex");
         let hashedPassword = String(this.password).trim();
         return (passwordHash === hashedPassword);
-    };  
+    };
     return Model;
 };

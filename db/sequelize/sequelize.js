@@ -9,7 +9,7 @@ let models = {
     //languages: (require("../schemas/schLanguages"))(connection, sequelize),
     //topics: (require("../schemas/schTopics"))(connection, sequelize),
    temp_tokens: (require("../schemas/schTemppass"))(connection, sequelize), // <-- Add this line
-    file:(require("./../schemas/file"))(connection, sequelize),
+    file:(require("../schemas/file"))(connection, sequelize),
     comments: (require("../schemas/schComments"))(connection, sequelize),
     likes: (require("../schemas/schLikes"))(connection, sequelize),
     roles:(require('../schemas/schRoles'))(connection, sequelize),

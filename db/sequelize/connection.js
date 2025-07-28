@@ -1,7 +1,7 @@
 let connection = null;
 let sequelize = require("sequelize");
 // let config = require("./../config/db");
-let config = require("./../../config/config.json");
+let config = require("../../config/config.json");
 require('dotenv').config()
 
 //--// 

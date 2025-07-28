@@ -85,7 +85,7 @@ const os = require("os");
 
 
 //------------------------------------//
-const sequelize = require('./db/sequelize/sequelize');
+const sequelize = require('./db/sequelize/sequelize.js');
 
 
 // console.log("Server host", os.hostname());
@@ -94,10 +94,10 @@ const sequelize = require('./db/sequelize/sequelize');
 
 
 //Here We are building the sequelize Db connection
-sequelize.connection.authenticate().then(async function () {
+sequelize.connection.authenticate({alter:true}).then(async function () {
     // console.log("DB Connection Successful");
     //Sync the db tables with the models here 
-    await sequelize.connection.sync({alter:true})
+    await sequelize.connection.sync()
     app.listen(process.env.PORT, async function (error) {
         if (error) { console.log("Server is not listening...", error); }
         else {

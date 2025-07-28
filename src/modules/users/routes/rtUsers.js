@@ -2,7 +2,9 @@ const express = require("express");
 const commonController = require("../controllers/ctrlUsers");
 const userRules = require('../validations/valUser');
 const Validation = require('../validations/validation');
-const verifyToken = require('../../../../middleware/verifyAuth');
+// const verifyToken = require('../../../../middleware/verifyAuth');
+// const roles = require('../../../../middleware/roles');
+// const verifyAuth  = require('../../../../middleware/verifyAuth');
 
 // --- Public Router ---
 
