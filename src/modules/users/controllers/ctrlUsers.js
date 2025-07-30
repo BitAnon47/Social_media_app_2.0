@@ -1,4 +1,3 @@
-
 const base_encoder = require("eb-butler-utils");
 const configJSON = require("../../../../config/config.json");
 const sequelize = require('../../../../db/sequelize/sequelize');
@@ -6,60 +5,36 @@ const userService = require('../services/srvcUsers')
 const config = require("../../../../config/config.json");
 const keys_length = config.keys_length;
 const index_separator = keys_length.index_separator;
+const { ROLES } = require('../../../../constants/roles');
 
 //--//
 
 const create = async function (req, res, next) {
     try {
-        let { name, email, password, confirmPassword, phoneNumber, role } = req.body;
-        let username = email.split('@')[0];
-        req.body.username = username;
+        const { email } = req.body;
 
-        // 🧠 Fallback role if not provided
-        if (!role || typeof role !== 'string' || role.trim() === '') {
-            role = 'user';
-        }
+        // Automatically create username
+        req.body.username = email.split('@')[0];
 
-        // ✅ Validate allowed roles
-        const allowedRoles = [3];
-        if (!allowedRoles.includes(role)) {
-            return res.status(400).json({ message: 'Invalid role provided' });
-        }
-
-        //  If role is 'admin', check that requester is superadmin
-        if (role === 1 && req.role !== 2) {
-            return res.status(403).json({ message: 'Only superadmin can assign admin role.' });
-        }
-
-        // Set normalized role back to req.body
-        req.body.role = role;
-
-        console.log("user data is here");
-        //  Call user service to create
         let userInstance = new sequelize.db(sequelize.models.users);
         const [user, err] = await userInstance.create(req.body);
-        console.log("this is the error *******",err);
         if (err) return next(err);
-        
-        // Response routing logic based on role
-        
-        if (req.role === 'superadmin') {
-            // Admin panel behavior — pass control to next middleware
-            return next(user);
 
-        } else {
-
-            // Normal API call — send response directly
-            return res.status(201).json({
-                message: 'User created successfully',
-                user
-            });
-
+        // If created by superadmin via admin panel
+        if (req.role === ROLES.SUPERADMIN) {
+            return next(user); // Send it to next step like notification/logging
         }
+
+        // Normal API response
+        return res.status(201).json({
+            message: 'User created successfully',
+            user,
+        });
     } catch (error) {
         return next(error);
     }
 };
+
 const update = async function (req, res, next) {
     try {
         let userInstance = new sequelize.db(sequelize.models.users);

@@ -5,7 +5,7 @@ export const ROLES = {
 };
 
 export const ROLESGROUP = {
-    AdminRole: [ROLES.SUPERADMIN],                // Only superadmin
-    AdminsRole: [ROLES.SUPERADMIN, ROLES.ADMIN],  // superadmin + admin
-    CommonRoler: [ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.USER] // All roles
+    AdminRole: [ROLES.SUPERADMIN],
+    AdminsRole: [ROLES.SUPERADMIN, ROLES.ADMIN],
+    CommonRoler: [ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.USER],
 };

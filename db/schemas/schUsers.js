@@ -57,6 +57,18 @@ module.exports = function (sequelize, DataTypes) {
                 field: 'phone'
             },
 
+            isVerified: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                field: 'is_verified'
+            },
+
+            stripeCustomerId: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                field: 'stripe_customer_id'
+            },
+
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
